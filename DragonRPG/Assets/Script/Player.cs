@@ -5,7 +5,39 @@ using UnityEngine;
 public class Player : MonoBehaviour, IDamagable {
 
 	[SerializeField] float maxHeathPoints = 100f;
-	float currentHeathPoints = 100f;
+	[SerializeField] float currentHeathPoints = 100f;
+	[SerializeField] float damagePerHit = 10f;
+	[SerializeField] float minTimeBetweenHit = 0.5f;
+	float lastHitTime = 0f;
+
+	GameObject currentTraget;
+	CameraRaycaster cameraRaycaster;
+
+	void Start(){
+		cameraRaycaster = FindObjectOfType<CameraRaycaster> ();
+	}
+		
+	[SerializeField] float maxAttackRange = 2f;
+
+	void Update ()
+	{
+		if (Input.GetMouseButton (0)) {
+			if (cameraRaycaster.layerHit == Layer.Enemy) {
+				var enemy = cameraRaycaster.hit.collider.gameObject;
+
+				if ((enemy.transform.position - transform.position).magnitude > maxAttackRange) {
+					return;
+				}
+
+				currentTraget = enemy;
+				var enemyCompoenent = enemy.GetComponent<Enemy> ();
+				if (Time.time - lastHitTime > minTimeBetweenHit){
+					enemyCompoenent.TakeDamage (damagePerHit);
+					lastHitTime = Time.time;
+				}
+			}
+		}
+	}
 
 	public float healthAsPercentage {
 		get {
@@ -14,7 +46,6 @@ public class Player : MonoBehaviour, IDamagable {
 	}
 
 	public void TakeDamage(float damage){
-		// ("TakeDamage = " + damage);
 		currentHeathPoints = Mathf.Clamp (currentHeathPoints - damage, 0f, maxHeathPoints);
 	}
 }

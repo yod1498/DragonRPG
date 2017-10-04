@@ -6,19 +6,22 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class Enemy : MonoBehaviour, IDamagable{
 
 	[SerializeField] float maxHeathPoints = 100f;
+	[SerializeField] float currentHeathPoints = 100f;
 	[SerializeField] float chaseRadius = 6f;
 	[SerializeField] float attackRadius = 4f;
 
 	[SerializeField] float damagePerShot = 9f;
 	[SerializeField] GameObject projectileToUse;
 	[SerializeField] GameObject projectileSocket;
+	[SerializeField] float secondBetweenShots = 0.5f;
 
-	float currentHeathPoints = 100f;
+	bool isAttacking = false;
 	AICharacterControl  aICharacterControl = null;
 	GameObject player = null;
 
 	public void TakeDamage(float damage){
 		currentHeathPoints = Mathf.Clamp (currentHeathPoints - damage, 0f, maxHeathPoints);
+		if (currentHeathPoints <= 0) { Destroy (gameObject);}
 	}
 
 	public float healthAsPercentage {
@@ -31,12 +34,18 @@ public class Enemy : MonoBehaviour, IDamagable{
 		player = GameObject.FindGameObjectWithTag ("Player");
 		aICharacterControl = GetComponent<AICharacterControl> ();
 	}
-		
+
 	void Update(){
 		float distanceToPlayer = Vector3.Distance (player.transform.position, transform.position);
 
-		if (distanceToPlayer <= attackRadius) {
-			SpawnProjectile ();
+		if (distanceToPlayer <= attackRadius && !isAttacking) {
+			isAttacking = true;
+			InvokeRepeating ("SpawnProjectile", 0f, secondBetweenShots);
+		}
+
+		if (distanceToPlayer > attackRadius) {
+			isAttacking = false;
+			CancelInvoke ();
 		}
 
 		if (distanceToPlayer <= chaseRadius) {
@@ -46,13 +55,15 @@ public class Enemy : MonoBehaviour, IDamagable{
 		}
 	}
 
+	[SerializeField] Vector3 aimOffset = new Vector3(0,1f,0);
+
 	void SpawnProjectile(){
 		GameObject newProjecttile = Instantiate (projectileToUse, projectileSocket.transform.position, Quaternion.identity);
 		Projectile projectileComponent = newProjecttile.GetComponent<Projectile> ();
 		projectileComponent.DamageCaused = damagePerShot;
 
-		Vector3 unitVectorToPlayer = (player.transform.position - projectileSocket.transform.position).normalized;
-		float projectileSpeed = projectileComponent.Projectilespeed;
+		Vector3 unitVectorToPlayer = (player.transform.position + aimOffset - projectileSocket.transform.position).normalized;
+		float projectileSpeed = projectileComponent.ProjectileSpeed;
 		newProjecttile.GetComponent<Rigidbody> ().velocity = unitVectorToPlayer * projectileSpeed;
 	}
 
