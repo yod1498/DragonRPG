@@ -1414,7 +1414,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1507403408091174}
   m_LocalRotation: {x: -0, y: 0.99532795, z: -0, w: -0.096552074}
-  m_LocalPosition: {x: 143.67, y: 0.33500004, z: 221.18}
+  m_LocalPosition: {x: 108.72, y: 0.19, z: 217.65}
   m_LocalScale: {x: 1.0000002, y: 1, z: 1.0000002}
   m_Children:
   - {fileID: 4439881286018448}
@@ -2569,14 +2569,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3384996b162334a8ab122882ef8fede6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHeathPoints: 100
+  maxHeathPoints: 40
+  currentHeathPoints: 40
   chaseRadius: 5
   attackRadius: 2.1
-  damagePerShot: 40
+  damagePerShot: 5
   projectileToUse: {fileID: 1330264683559726, guid: 7c3c8258dda214d7a9096dfe4c707211,
     type: 2}
   projectileSocket: {fileID: 1286562805884152}
-  secondBetweenShots: 2.5
+  secondBetweenShots: 0.5
   aimOffset: {x: 0, y: 1, z: 0}
 --- !u!114 &114470631806735804
 MonoBehaviour:
@@ -2596,7 +2597,7 @@ MonoBehaviour:
   m_RunCycleLegOffset: 0.2
   m_MoveSpeedMultiplier: 1
   m_AnimSpeedMultiplier: 1
-  m_GroundCheckDistance: 0.3
+  m_GroundCheckDistance: 1
 --- !u!114 &114541127524753542
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2648,7 +2649,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: a62524ce1aaec4fbd92197eb7c037da4, type: 2}
+  - {fileID: 2100000, guid: 38287f9172cea47898220e901a7c7d0c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2814,7 +2815,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 0
+  m_Speed: 2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120

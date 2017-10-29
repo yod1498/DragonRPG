@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,11 +14,21 @@ public class Player : MonoBehaviour, IDamagable {
 	GameObject currentTraget;
 	CameraRaycaster cameraRaycaster;
 
+	[SerializeField] Weapon weaponInUse;
 	void Start(){
 		cameraRaycaster = FindObjectOfType<CameraRaycaster> ();
+        PutWeaponInHand();
 	}
-		
-	[SerializeField] float maxAttackRange = 2f;
+
+    [SerializeField] GameObject weaponSocket;
+    private void PutWeaponInHand(){
+        var weaponPrefab = weaponInUse.GetWeaponPrefab();
+        var weapon = Instantiate(weaponPrefab,weaponSocket.transform);
+        weapon.transform.localPosition = weaponInUse.gripTransform.localPosition;
+        weapon.transform.localRotation = weaponInUse.gripTransform.localRotation;
+    }
+
+    [SerializeField] float maxAttackRange = 2f;
 
 	void Update ()
 	{
