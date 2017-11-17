@@ -2,13 +2,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RPG.CameraUI;
 
 public class Player : MonoBehaviour, IDamagable {
-
+    
 	[SerializeField] float maxHeathPoints = 100f;
 	[SerializeField] float currentHeathPoints = 100f;
 	[SerializeField] float damagePerHit = 10f;
-	[SerializeField] float minTimeBetweenHit = 0.5f;
+	//[SerializeField] float minTimeBetweenHit = 0.5f;
+	//[SerializeField] float maxAttackRange = 2f;
+	[SerializeField] GameObject weaponSocket;
+
+	void Update()
+	{
+		if (Input.GetMouseButton(0))
+		{
+			if (cameraRaycaster.layerHit == Layer.Enemy)
+			{
+				var enemy = cameraRaycaster.hit.collider.gameObject;
+
+				if ((enemy.transform.position - transform.position)
+                    .magnitude > weaponInUse.GetMaxAttackRange())
+				{
+					return;
+				}
+
+				currentTraget = enemy;
+				var enemyCompoenent = enemy.GetComponent<Enemy>();
+				if (Time.time - lastHitTime > weaponInUse.GetMinTimeBetweenHits())
+				{
+                    OverrideAnimatorController();
+					animator.SetTrigger("Attack");
+                    enemyCompoenent.TakeDamage(damagePerHit + weaponInUse.GetAdditionalDamage());
+					lastHitTime = Time.time;
+				}
+			}
+		}
+	}
+
 	float lastHitTime = 0f;
 
 	GameObject currentTraget;
@@ -17,38 +48,30 @@ public class Player : MonoBehaviour, IDamagable {
 	[SerializeField] Weapon weaponInUse;
 	void Start(){
 		cameraRaycaster = FindObjectOfType<CameraRaycaster> ();
-        PutWeaponInHand();
+        PutWeaponInHand(weaponInUse);
+        OverrideAnimatorController();
 	}
 
-    [SerializeField] GameObject weaponSocket;
-    private void PutWeaponInHand(){
-        var weaponPrefab = weaponInUse.GetWeaponPrefab();
-        var weapon = Instantiate(weaponPrefab,weaponSocket.transform);
-        weapon.transform.localPosition = weaponInUse.gripTransform.localPosition;
-        weapon.transform.localRotation = weaponInUse.gripTransform.localRotation;
-    }
-
-    [SerializeField] float maxAttackRange = 2f;
-
-	void Update ()
+    GameObject weaponObject;
+    public void PutWeaponInHand(Weapon weaponConfig)
 	{
-		if (Input.GetMouseButton (0)) {
-			if (cameraRaycaster.layerHit == Layer.Enemy) {
-				var enemy = cameraRaycaster.hit.collider.gameObject;
-
-				if ((enemy.transform.position - transform.position).magnitude > maxAttackRange) {
-					return;
-				}
-
-				currentTraget = enemy;
-				var enemyCompoenent = enemy.GetComponent<Enemy> ();
-				if (Time.time - lastHitTime > minTimeBetweenHit){
-					enemyCompoenent.TakeDamage (damagePerHit);
-					lastHitTime = Time.time;
-				}
-			}
-		}
+		weaponInUse = weaponConfig;
+        var weaponPrefab = weaponConfig.GetWeaponPrefab();
+		Destroy(weaponObject);//empty hands
+        weaponObject = Instantiate(weaponPrefab, weaponSocket.transform);
+		weaponObject.transform.localPosition = weaponInUse.gripTransform.localPosition;
+		weaponObject.transform.localRotation = weaponInUse.gripTransform.localRotation;
 	}
+
+	[SerializeField] AnimatorOverrideController animatorOverrideController;
+	Animator animator;
+	private void OverrideAnimatorController()
+	{
+		animator = GetComponent<Animator>();
+		animator.runtimeAnimatorController = animatorOverrideController;
+		animatorOverrideController["Default Attack"] = weaponInUse.GetAttackAnimClip();
+	}
+
 
 	public float healthAsPercentage {
 		get {

@@ -727,6 +727,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02073e2042a9b4812a6a3062274a494a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animatorOverrideController: {fileID: 22100000, guid: 8d79514676f214b4489db0f451eff14c,
+    type: 2}
   maxHeathPoints: 1000
   currentHeathPoints: 1000
   damagePerHit: 10

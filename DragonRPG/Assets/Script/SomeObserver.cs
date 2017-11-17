@@ -2,18 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SomeObserver : MonoBehaviour {
+namespace RPG.CameraUI
+{
+    public class SomeObserver : MonoBehaviour
+    {
 
-	CameraRaycaster cameraRaycaster;
+        CameraRaycaster cameraRaycaster;
 
-	// Use this for initialization
-	void Awake () {
-		cameraRaycaster = GetComponent<CameraRaycaster> ();
-		//cameraRaycaster.layerChangeObservers += SomeHandlingFunction;
-	}
-	
-	// Update is called once per frame
-	void SomeHandlingFunction () {
-		print ("handled from elsewhere");
-	}
+        // Use this for initialization
+        void Awake()
+        {
+            cameraRaycaster = GetComponent<CameraRaycaster>();
+            //cameraRaycaster.layerChangeObservers += SomeHandlingFunction;
+        }
+
+        // Update is called once per frame
+        void SomeHandlingFunction()
+        {
+            print("handled from elsewhere");
+        }
+    }
 }
